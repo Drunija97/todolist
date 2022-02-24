@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Document</title>
+    <style>
+        .head {
+            background-color: black;
+            height: 30px;
+            content-visibility: center;
+
+        }
+
+        button {
+            background-color: skyblue;
+            text-align: center;
+            height: 25px;
+        }
+
+        form {
+            float: right;
+            border: 1px solid;
+            background-color: lightslategray;
+            height: 200px;
+            width: 30%;
+        }
+
+        table {
+            background-color: palegoldenrod;
+            border: 1px solid;
+            width: 69.8%;
+
+        }
+
+        tr {
+            border: 1px solid;
+        }
+
+        td {
+            border: 1px solid;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="head">
+        <button onclick="showData()">Show list</button>
+        <div class="tname">
+        </div>
+
+        <form onsubmit="event.preventDefault()">
+            <center>
+                <br>
+                <label>Add Task:</label><br>
+                <input id="id" type="number" placeholder="Id" required><br><br>
+                <input id="task" type="text" placeholder="title" required><br><br>
+                <input id="completed" type="text" placeholder="completed" required><br><br>
+                <button onclick="addData()">Add</button>
+            </center>
+        </form>
+        <table id="res">
+
+        </table>
+        <script>
+            var array = [];
+            var url = 'https://jsonplaceholder.typicode.com/todos';
+            var flag = true;
+            async function showData() {
+                if (flag) {
+                    var data = await fetch(url);
+                    var result = await data.json();
+                    array = result;
+                    flag = false;
+                }
+               
+                res = `<tr>
+                <td> Id </td>
+                <td> title </td>
+                <td> completed </td>
+                <td> action </td>                
+            </tr>`
+                var newvalue =0; 
+                array.map(element => {
+                    res +=
+                        `<tr id="${newvalue}"> 
+                    <td>${element.id}</td>
+                    <td>${element.title}</td>
+                    <td>${element.completed}</td>
+                    <td><button onclick="Delete(${element.id})">Delete</td>
+                    <td><button onclick="edit(${newvalue})">Edit</button></td>
+
+                </tr>`;
+                newvalue++; 
+                });
+
+                document.getElementById('res').innerHTML = res;
+            }
+
+            function Delete(remove) {
+                alert('Are you sure to delete record !!!!')
+                // var del = ''
+                console.log(remove);
+                let arr1 = array.filter((element) => {
+                    return element.id != remove;
+                });
+
+                array = arr1
+                console.log(array);
+
+                res = `<tr><td>Id</td><td>title</td><td>status</td><td>Action</td></tr>`
+                arr1.map((element) => {
+                    res += `<tr>
+                    <td>${element.id}</td>
+                    <td>${element.title}</td>
+                    <td>${element.completed}</td>
+                    <td><button onclick="Delete(${element.id})">Delete</button></td>
+                    <td><button onclick="edit(${element.id})">Edit</button></td>
+                </tr>`;
+                });
+                document.getElementById("res").innerHTML = res;
+                // document.getElementsByTagName(del).innerHTML=del
+            }
+
+            function addData() {
+                let insert = {
+                    id: document.getElementById("id").value,
+                    title: document.getElementById("task").value,
+                    completed: document.getElementById("completed").value,
+                }
+
+                array.unshift(insert);
+                console.log(array);
+                showData();
+
+            }
+            function edit(idvalue) {
+                console.log(idvalue);
+                document.getElementById(idvalue).contentEditable = "true";
+                
+            }
+        </script>
+</body>
+
+</html>
